@@ -25,11 +25,7 @@ class VisitTest extends TestCase
         $response->assertStatus(302);
 
         $this->assertDatabaseCount('visits', 1);
-        //  Not working with sqlite tests
-        //        $this->assertDatabaseHas(Visit::class, [
-        //            'url_id ' => $url->id,
-        //            'device_type ' => 'Desktop',
-        //        ]);
+        $this->assertDatabaseHas('visits', ['url_id' => $url->getKey()]);
     }
 
     public function test_created_url_ref_log_visit_exists(): void
@@ -39,6 +35,7 @@ class VisitTest extends TestCase
         $response->assertStatus(302);
 
         $this->assertDatabaseCount('visit_refs', 1);
+        $this->assertDatabaseHas('visit_refs', ['url_id' => $url->getKey()]);
     }
 
     public function test_created_url_referrer_log_visit_exists(): void
@@ -49,5 +46,6 @@ class VisitTest extends TestCase
 
         $this->assertDatabaseCount('visit_referrers', 1);
         $this->assertDatabaseCount('visit_referrer_hosts', 1);
+        $this->assertDatabaseHas('visit_referrers', ['url_id' => $url->getKey()]);
     }
 }

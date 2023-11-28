@@ -20,6 +20,7 @@ class UserTest extends TestCase
     {
         $user = User::factory()->create();
 
+        $this->assertDatabaseHas('users', ['name' => $user->name]);
         $this->assertModelExists($user);
     }
 }
