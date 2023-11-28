@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TeamUserRoleEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -40,5 +41,22 @@ class Team extends Model
     public function urls(): HasMany
     {
         return $this->hasMany(Url::class);
+    }
+
+    /**
+     * Perform any actions required after the model boots.
+     *
+     * @return void
+     */
+    public static function booted(): void
+    {
+        static::created(function (self $team) {
+            if (auth()->check() && !$team->users->count()) {
+                $team->users()->syncWithPivotValues(
+                    auth()->user()->getKey(),
+                    ['role' => TeamUserRoleEnum::OWNER]
+                );
+            }
+        });
     }
 }
