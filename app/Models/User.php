@@ -63,27 +63,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Perform any actions required after the model boots.
-     *
-     * @return void
-     */
-    public static function booted(): void
-    {
-        static::created(function (self $user) {
-            if (!$user->teams()->count()) {
-                $team = $user->teams()->create(
-                    ['name' => $user->name . '’s Team']
-                );
-                /* @var \App\Models\Team $team */
-                $team->users()->syncWithPivotValues(
-                    $user->id,
-                    ['role' => TeamUserRoleEnum::OWNER]
-                );
-            }
-        });
-    }
-
-    /**
      * Verify that a user is a member of a team.
      */
     public function isMemberOf(Team $team): bool
@@ -116,5 +95,13 @@ class User extends Authenticatable
             ->wherePivot('team_id', $team->id)
             ->wherePivot('role', TeamUserRoleEnum::OWNER)
             ->exists();
+    }
+
+    /**
+     * Get the IDs of the teams for the user.
+     */
+    public function teamIds(): array
+    {
+        return $this->teams->pluck('id')->toArray();
     }
 }

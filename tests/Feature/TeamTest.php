@@ -16,8 +16,14 @@ class TeamTest extends TestCase
         $user = User::factory()->create(['is_admin' => false]);
         $this->login($user);
 
+        $team = $user->teams()->create(
+            ['name' => $user->name . '’s Team']
+        );
         /* @var \App\Models\Team $team */
-        $team = $user->teams()->first();
+        $team->users()->syncWithPivotValues(
+            $user->id,
+            ['role' => TeamUserRoleEnum::OWNER]
+        );
 
         $this->assertTrue($user->can('view', $team));
         $this->assertTrue($user->can('update', $team));
@@ -75,21 +81,5 @@ class TeamTest extends TestCase
         $this->assertFalse($user->can('restore', $team));
         $team->delete();
         $this->assertFalse($user->can('forceDelete', $team));
-    }
-
-    public function test_created_user_has_a_team_after_creation(): void
-    {
-        $user = User::factory()->create();
-
-        $this->assertCount(1, $user->fresh()->teams);
-    }
-
-    public function test_created_user_owned_a_team_after_creation(): void
-    {
-        $user = User::factory()->create();
-
-        $this->assertTrue(
-            $user->fresh()->teams->first()->pivot->role === TeamUserRoleEnum::OWNER
-        );
     }
 }

@@ -2,16 +2,27 @@
 
 namespace Tests\Feature;
 
+use App\Enums\TeamUserRoleEnum;
 use App\Models\Team;
 use App\Models\Url;
 use App\Models\User;
 
 trait CreateTrait
 {
-    protected function createTeam(): Team
+    protected function createTeam(?User $user = null): Team
     {
-        $user = User::factory()->create(['is_admin' => false]);
+        if (!$user) {
+            $user = User::factory()->create(['is_admin' => false]);
+        }
         $this->login($user);
+        $team = $user->teams()->create(
+            ['name' => $user->name . '’s Team']
+        );
+        /* @var \App\Models\Team $team */
+        $team->users()->syncWithPivotValues(
+            $user->id,
+            ['role' => TeamUserRoleEnum::OWNER]
+        );
 
         return $user->teams()->first();
     }

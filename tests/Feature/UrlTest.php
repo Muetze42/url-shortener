@@ -25,7 +25,7 @@ class UrlTest extends TestCase
         $user = User::factory()->create(['is_admin' => false]);
         $this->login($user);
 
-        $team = $user->teams()->first();
+        $team = $this->createTeam($user);
         $url = $this->createUrl($team);
 
         $this->assertTrue($user->can('view', $url));
