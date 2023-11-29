@@ -1,0 +1,7 @@
+{
+  "resources/scss/app.scss": {
+    "file": "app.css",
+    "isEntry": true,
+    "src": "resources/scss/app.scss"
+  }
+}
