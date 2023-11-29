@@ -19,7 +19,8 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return $user->is_admin || $user->id == $model->id;
+        return $user->is_admin || $user->id == $model->id ||
+            count(array_intersect($user->teamIds(), $model->teamIds()));
     }
 
     /**
