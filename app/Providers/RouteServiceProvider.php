@@ -38,7 +38,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/web.php'));
 
             Route::middleware(SubstituteBindings::class)
-                ->group(base_path('routes/only-routing.php'));
+                ->group(base_path('routes/simple.php'));
         });
     }
 }
