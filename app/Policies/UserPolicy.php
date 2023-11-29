@@ -62,4 +62,12 @@ class UserPolicy
     {
         return $user->is_admin && $model->trashed();
     }
+
+    /**
+     * Determine whether the user can replicate the model.
+     */
+    public function replicate(User $user, User $model): bool
+    {
+        return false;
+    }
 }

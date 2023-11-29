@@ -62,4 +62,28 @@ class TeamPolicy
     {
         return $team->trashed() && ($user->is_admin || $user->isOwnerOf($team));
     }
+
+    /**
+     * Determine whether the user can attach any member to the team.
+     */
+    public function attachAnyUser(User $user, Team $team): bool
+    {
+        return $user->is_admin;
+    }
+
+    /**
+     * Determine whether the user can detach a tag from a podcast.
+     */
+    public function detachUser(User $user, Team $team, User $model): bool
+    {
+        return $user->is_admin || $user->isAdminOf($team);
+    }
+
+    /**
+     * Determine whether the user can replicate the model.
+     */
+    public function replicate(User $user, Team $team): bool
+    {
+        return false;
+    }
 }

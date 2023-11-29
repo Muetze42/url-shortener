@@ -62,4 +62,12 @@ class VisitPolicy
     {
         return false;
     }
+
+    /**
+     * Determine whether the user can replicate the model.
+     */
+    public function replicate(User $user, Visit $visit): bool
+    {
+        return false;
+    }
 }

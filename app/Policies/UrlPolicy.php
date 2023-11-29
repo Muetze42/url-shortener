@@ -62,4 +62,12 @@ class UrlPolicy
     {
         return $user->is_admin || $user->isAdminOf($url->team);
     }
+
+    /**
+     * Determine whether the user can replicate the model.
+     */
+    public function replicate(User $user, Url $url): bool
+    {
+        return false;
+    }
 }

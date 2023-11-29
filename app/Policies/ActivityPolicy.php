@@ -62,4 +62,12 @@ class ActivityPolicy
     {
         return false;
     }
+
+    /**
+     * Determine whether the user can replicate the model.
+     */
+    public function replicate(User $user, Activity $activity): bool
+    {
+        return false;
+    }
 }
