@@ -93,7 +93,7 @@ class TeamPolicy
      */
     public function attachAnyUrl(User $user, Url $url): bool
     {
-        return $user->is_admin;
+        return true;
     }
 
     /**
@@ -101,7 +101,7 @@ class TeamPolicy
      */
     public function attachUrl(User $user, Team $team, Url $url): bool
     {
-        return $user->is_admin || $user->isAdminOf($team);
+        return $user->isMemberOf($team);
     }
 
     /**
@@ -109,7 +109,7 @@ class TeamPolicy
      */
     public function detachUrl(User $user, Team $team, Url $url): bool
     {
-        return $user->is_admin || $user->isAdminOf($team);
+        return $user->isMemberOf($team);
     }
 
     /**
