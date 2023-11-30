@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\TeamUserRoleEnum;
 use App\Models\Team;
 use App\Models\Url;
 use App\Models\User;
@@ -77,7 +78,9 @@ class TeamPolicy
      */
     public function attachUser(User $user, Team $team, User $model): bool
     {
-        return $user->is_admin || $user->isAdminOf($team);
+        return ($user->is_admin || $user->isAdminOf($team)) &&
+            !$team->users()->wherePivot('role', TeamUserRoleEnum::OWNER)
+                ->wherePivot('user_id', $model->id)->exists();
     }
 
     /**
@@ -85,7 +88,9 @@ class TeamPolicy
      */
     public function detachUser(User $user, Team $team, User $model): bool
     {
-        return $user->is_admin || $user->isAdminOf($team);
+        return ($user->is_admin || $user->isAdminOf($team)) &&
+            !$team->users()->wherePivot('role', TeamUserRoleEnum::OWNER)
+                ->wherePivot('user_id', $model->id)->exists();
     }
 
     /**
