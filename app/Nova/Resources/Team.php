@@ -2,24 +2,24 @@
 
 namespace App\Nova\Resources;
 
+use App\Enums\TeamUserRoleEnum;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Validation\Rules;
-use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\Gravatar;
+use Laravel\Nova\Fields\BelongsToMany;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Password;
-use Laravel\Nova\Fields\PasswordConfirmation;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use NormanHuth\FontAwesomeField\FontAwesome;
 
-class User extends Resource
+class Team extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static string $model = \App\Models\User::class;
+    public static string $model = \App\Models\Team::class;
 
     /**
      * Build an "index" query filter for the given resource.
@@ -31,14 +31,12 @@ class User extends Resource
      */
     public static function indexFilter(NovaRequest $request, Builder $query): Builder
     {
-        /* @var \Illuminate\Database\Eloquent\Builder|\App\Models\User $query */
+        /* @var \Illuminate\Database\Eloquent\Builder|\App\Models\Team $query */
         if ($request->user()->is_admin) {
             return $query;
         }
 
-        return $query->whereHas('teams', function (Builder $query) use ($request) {
-            $query->whereIn('team_id', $request->user()->teamIds());
-        });
+        return $query->whereIn('id', $request->user()->teamIds());
     }
 
     /**
@@ -54,9 +52,9 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id',
         'name',
-        'email',
+        'user.name',
+        'user.email',
     ];
 
     /**
@@ -70,29 +68,22 @@ class User extends Resource
     {
         return [
             ID::make()->sortable(),
-
-            Gravatar::make()->maxWidth(50),
-
             Text::make(__('Name'), 'name')
-                ->sortable()
-                ->rules('required', 'max:255'),
-
-            Text::make(__('Email'), 'email')
-                ->sortable()
-                ->rules('required', 'email', 'max:254')
-                ->creationRules('unique:users,email')
-                ->updateRules('unique:users,email,{{resourceId}}'),
-
-            Boolean::make(__('Administration'), 'is_admin')
-                ->canSee(fn (NovaRequest $request) => $request->user()->is_admin || !$request->isFormRequest())
+                ->rules('required', 'max:255')
                 ->sortable(),
+            FontAwesome::make('icon')->nullable(),
 
-            Password::make(__('Password'), 'password')
-                ->onlyOnForms()
-                ->creationRules('required', Rules\Password::defaults(), 'confirmed')
-                ->updateRules('nullable', Rules\Password::defaults(), 'confirmed'),
+            BelongsToMany::make(__('Users'), 'users')
+                ->fields(function () {
+                    return [
+                        Select::make(__('Role'), 'role')
+                            ->options(TeamUserRoleEnum::toValueLabelArray())
+                            ->rules('required')
+                            ->default(TeamUserRoleEnum::MEMBER),
+                    ];
+                }),
 
-            PasswordConfirmation::make(__('Password Confirmation')),
+            HasMany::make(__('URLs'), 'urls'),
         ];
     }
 

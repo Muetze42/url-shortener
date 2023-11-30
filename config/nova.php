@@ -6,6 +6,7 @@ use Laravel\Nova\Http\Middleware\Authorize;
 use Laravel\Nova\Http\Middleware\BootTools;
 use Laravel\Nova\Http\Middleware\DispatchServingNovaEvent;
 use Laravel\Nova\Http\Middleware\HandleInertiaRequests;
+use NormanHuth\NovaPerspectives\Http\Middleware\HandleNovaPerspektive;
 
 return [
 
@@ -16,7 +17,7 @@ return [
     |
     | The following configuration option contains your Nova license key. On
     | non-local domains, Nova will verify that the Nova installation has
-    | a valid license associated with the application's active domain.
+    | a valid license associated with the application's an active domain.
     |
     */
 
@@ -101,6 +102,7 @@ return [
     'middleware' => [
         'web',
         HandleInertiaRequests::class,
+        HandleNovaPerspektive::class,
         DispatchServingNovaEvent::class,
         BootTools::class,
     ],

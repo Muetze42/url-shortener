@@ -49,7 +49,7 @@ class UrlVisited implements ShouldQueue
     protected HeaderBag $headerBag;
 
     /**
-     * The HeaderBag instance
+     * The ref parameter.
      *
      * @var string|null
      */

@@ -3,23 +3,22 @@
 namespace App\Nova\Resources;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Validation\Rules;
+use Illuminate\Support\Str;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Password;
-use Laravel\Nova\Fields\PasswordConfirmation;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class User extends Resource
+class Url extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static string $model = \App\Models\User::class;
+    public static string $model = \App\Models\Url::class;
 
     /**
      * Build an "index" query filter for the given resource.
@@ -31,14 +30,13 @@ class User extends Resource
      */
     public static function indexFilter(NovaRequest $request, Builder $query): Builder
     {
-        /* @var \Illuminate\Database\Eloquent\Builder|\App\Models\User $query */
-        if ($request->user()->is_admin) {
-            return $query;
+        $teamId = (int) $request->input('viaPerspective');
+        /* @var \Illuminate\Database\Eloquent\Builder|\App\Models\Url $query */
+        if (!in_array($teamId, $request->user()->teamIds())) {
+            return $query->whereNull('team_id');
         }
 
-        return $query->whereHas('teams', function (Builder $query) use ($request) {
-            $query->whereIn('team_id', $request->user()->teamIds());
-        });
+        return $query->where('team_id', $teamId);
     }
 
     /**
@@ -54,9 +52,10 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'path',
         'name',
-        'email',
+        'target',
+        'team.name',
     ];
 
     /**
@@ -70,29 +69,29 @@ class User extends Resource
     {
         return [
             ID::make()->sortable(),
-
-            Gravatar::make()->maxWidth(50),
-
-            Text::make(__('Name'), 'name')
-                ->sortable()
-                ->rules('required', 'max:255'),
-
-            Text::make(__('Email'), 'email')
-                ->sortable()
-                ->rules('required', 'email', 'max:254')
-                ->creationRules('unique:users,email')
-                ->updateRules('unique:users,email,{{resourceId}}'),
-
-            Boolean::make(__('Administration'), 'is_admin')
-                ->canSee(fn (NovaRequest $request) => $request->user()->is_admin || !$request->isFormRequest())
-                ->sortable(),
-
-            Password::make(__('Password'), 'password')
+            BelongsTo::make(__('Team'), 'team')
+                ->readonly()
                 ->onlyOnForms()
-                ->creationRules('required', Rules\Password::defaults(), 'confirmed')
-                ->updateRules('nullable', Rules\Password::defaults(), 'confirmed'),
+                ->default($request->input('viaPerspective')),
+            Text::make(__('Path'), 'path')
+                ->sortable()
+                ->rules('required', 'max:100', function ($attribute, $value, $fail) {
+                    appLog(config('app.url') . '/' . $value);
+                    if (!Str::isUrl(config('app.url') . '/' . $value)) {
+                        return $fail('The ' . $attribute . ' field must be a valid URL path.');
+                    }
 
-            PasswordConfirmation::make(__('Password Confirmation')),
+                    return true;
+                }),
+            Text::make(__('Target'), 'target')
+                ->sortable()->rules('required', 'max:255', 'url'),
+            Boolean::make(__('Active'), 'active')
+                ->sortable()->default(true),
+
+            Number::make(__('Visits'), 'visits')
+                ->sortable()->exceptOnForms(),
+            Number::make(__('Total visits'), 'visits_total')
+                ->sortable()->exceptOnForms(),
         ];
     }
 

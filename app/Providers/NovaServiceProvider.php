@@ -2,11 +2,18 @@
 
 namespace App\Providers;
 
-use App\Models\User;
+use App\Models\User as UserModel;
 use App\Nova\Dashboards\Main;
+use App\Nova\Resources\Team;
+use App\Nova\Resources\Url;
+use App\Nova\Resources\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
+use NormanHuth\NovaMenu\MenuItem;
+use NormanHuth\NovaMenu\MenuSection;
+use NormanHuth\NovaPerspectives\Menu\PerspektiveSelect;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
@@ -18,6 +25,19 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function boot(): void
     {
         parent::boot();
+
+        Nova::mainMenu(function (Request $request) {
+            return [
+                PerspektiveSelect::make(),
+                MenuSection::make(__('Shortener'), [
+                    MenuItem::resource(Url::class),
+                ])->svgIcon(resource_path('icons/link.svg')),
+                MenuSection::make('Team', [
+                    MenuItem::resource(Team::class),
+                    MenuItem::resource(User::class),
+                ])->svgIcon(resource_path('icons/users.svg')),
+            ];
+        });
     }
 
     /**
@@ -42,7 +62,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     protected function gate(): void
     {
-        Gate::define('viewNova', function (User $user) {
+        Gate::define('viewNova', function (UserModel $user) {
             return true;
         });
     }
