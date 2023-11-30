@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Team;
+use App\Models\Url;
 use App\Models\User;
 
 class TeamPolicy
@@ -72,9 +73,41 @@ class TeamPolicy
     }
 
     /**
-     * Determine whether the user can detach a tag from a podcast.
+     * Determine whether the user can detach a member from a team.
+     */
+    public function attachUser(User $user, Team $team, User $model): bool
+    {
+        return $user->is_admin || $user->isAdminOf($team);
+    }
+
+    /**
+     * Determine whether the user can detach a member from a team.
      */
     public function detachUser(User $user, Team $team, User $model): bool
+    {
+        return $user->is_admin || $user->isAdminOf($team);
+    }
+
+    /**
+     * Determine whether the user can attach any url to the team.
+     */
+    public function attachAnyUrl(User $user, Url $url): bool
+    {
+        return $user->is_admin;
+    }
+
+    /**
+     * Determine whether the user can detach an url from a team.
+     */
+    public function attachUrl(User $user, Team $team, Url $url): bool
+    {
+        return $user->is_admin || $user->isAdminOf($team);
+    }
+
+    /**
+     * Determine whether the user can detach an url from a team.
+     */
+    public function detachUrl(User $user, Team $team, Url $url): bool
     {
         return $user->is_admin || $user->isAdminOf($team);
     }
