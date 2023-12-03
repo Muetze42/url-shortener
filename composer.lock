@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f92c9a39157f40a35c10b2f095563996",
+    "content-hash": "02c5048012083c58914b347d01959d30",
     "packages": [
         {
             "name": "brick/math",
@@ -4091,6 +4091,64 @@
                 }
             ],
             "time": "2023-12-01T05:06:26+00:00"
+        },
+        {
+            "name": "norman-huth/nova-radio-field",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Muetze42/nova-radio-field.git",
+                "reference": "8a7451fc1f4809c5613bde3073130996434d4e69"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Muetze42/nova-radio-field/zipball/8a7451fc1f4809c5613bde3073130996434d4e69",
+                "reference": "8a7451fc1f4809c5613bde3073130996434d4e69",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/nova": "^4.0",
+                "norman-huth/nova-basic-package": "^1.2.0",
+                "php": "^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "NormanHuth\\NovaRadioField\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "NormanHuth\\NovaRadioField\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova Radio field.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "support": {
+                "docs": "https://github.com/Muetze42/nova-radio-field#readme",
+                "issues": "https://github.com/Muetze42/nova-radio-field/issues",
+                "source": "https://github.com/Muetze42/nova-radio-field"
+            },
+            "funding": [
+                {
+                    "url": "https://huth.it/coffee",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://ko-fi.com/normanhuth",
+                    "type": "ko_fi"
+                }
+            ],
+            "time": "2023-12-03T01:37:38+00:00"
         },
         {
             "name": "nunomaduro/termwind",

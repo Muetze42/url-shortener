@@ -26,6 +26,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         parent::boot();
 
+        Nova::footer(function ($request) {
+            return str_replace('<a ', '<a target="_blank" ', Nova::defaultFooter($request));
+        });
+
         Nova::mainMenu(function (Request $request) {
             return [
                 PerspektiveSelect::make(),

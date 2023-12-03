@@ -11,6 +11,7 @@ use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use NormanHuth\FontAwesomeField\FontAwesome;
+use NormanHuth\NovaRadioField\Radio;
 
 class Team extends Resource
 {
@@ -74,12 +75,22 @@ class Team extends Resource
             FontAwesome::make('icon')->nullable(),
 
             BelongsToMany::make(__('Users'), 'users')
-                ->fields(function () {
+                ->fields(function (NovaRequest $request) {
+                    $roles = $request->isFormRequest() ? [
+                        TeamUserRoleEnum::MEMBER->value => TeamUserRoleEnum::MEMBER->label(),
+                        TeamUserRoleEnum::ADMIN->value => TeamUserRoleEnum::ADMIN->label(),
+                    ] : [
+                        TeamUserRoleEnum::MEMBER->value => TeamUserRoleEnum::MEMBER->label(),
+                        TeamUserRoleEnum::ADMIN->value => TeamUserRoleEnum::ADMIN->label(),
+                        TeamUserRoleEnum::OWNER->value => TeamUserRoleEnum::OWNER->label(),
+                    ];
+
                     return [
-                        Select::make(__('Role'), 'role')
-                            ->options(TeamUserRoleEnum::toValueLabelArray())
+                        Radio::make(__('Role'), 'role')
+                            ->options($roles)
                             ->rules('required')
-                            ->default(TeamUserRoleEnum::MEMBER),
+                            ->default(TeamUserRoleEnum::MEMBER)
+                            ->displayUsingLabels(),
                     ];
                 }),
 

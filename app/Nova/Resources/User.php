@@ -83,7 +83,7 @@ class User extends Resource
                 ->creationRules('unique:users,email')
                 ->updateRules('unique:users,email,{{resourceId}}'),
 
-            Boolean::make(__('Administration'), 'is_admin')
+            Boolean::make(__('Admin'), 'is_admin')
                 ->canSee(fn (NovaRequest $request) => $request->user()->is_admin || !$request->isFormRequest())
                 ->sortable(),
 

@@ -29,6 +29,7 @@
         "norman-huth/nova-font-awesome-field": "^1.0",
         "norman-huth/nova-menu": "^1.7",
         "norman-huth/nova-perspectives": "^1.1.1",
+        "norman-huth/nova-radio-field": "^1.2",
         "spatie/laravel-activitylog": "^4.7",
         "spatie/laravel-medialibrary": "^10.15"
     },
